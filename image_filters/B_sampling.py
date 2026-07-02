@@ -43,16 +43,31 @@ def apply_pixel_art(frame, pixel_size=6, total_colors=8):
     return final_art
 
 
-def apply_halftone(frame, step=8):
+def apply_halftone(frame, dot_size=3):
+
     h, w = frame.shape[:2]
+
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    canvas = np.ones((h, w, 3), dtype=np.uint8) * 255  # Blank white matrix
 
-    for y in range(0, h, step):
-        for x in range(0, w, step):
-            luminosity = np.mean(gray[y:y + step, x:x + step])
-            radius = int((1 - luminosity / 255.0) * (step / 2))
-            if radius > 0:
-                cv2.circle(canvas, (x + step // 2, y + step // 2), radius, (0, 0, 0), -1)
+    intensity = (255 - gray) / 255.0
 
-    return canvas
+    intensity = np.clip(intensity * 1.15, 0, 1)
+
+    y_idx, x_idx = np.indices((h, w))
+
+    theta = np.radians(45)
+    scale = np.pi / dot_size
+
+    X = x_idx * np.cos(theta) - y_idx * np.sin(theta)
+    Y = x_idx * np.sin(theta) + y_idx * np.cos(theta)
+
+    screen = (np.sin(X * scale) + np.sin(Y * scale)) / 2.0
+
+    screen_norm = (screen + 1) / 2.0
+
+    ink_mask = intensity > screen_norm
+
+    canvas = np.ones((h, w), dtype=np.uint8) * 255
+    canvas[ink_mask] = 0
+
+    return cv2.cvtColor(canvas, cv2.COLOR_GRAY2BGR)
