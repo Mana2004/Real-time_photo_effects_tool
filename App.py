@@ -1,22 +1,21 @@
 import tkinter as tk
-from tkinter import ttk
 import cv2
 from PIL import Image, ImageTk
 import os
 
-# Import backends
-import A_color as color_mod
-import B_sampling as sampling_mod
-import C_color_quantization as quant_mod
-import D_stylization as style_mod
-import E_texture as texture_mod
-import F_ar_filters as ar_mod
+import image_filters.A_color as color_mod
+import image_filters.B_sampling as sampling_mod
+import image_filters.C_color_quantization as quant_mod
+import image_filters.D_stylization as style_mod
+import image_filters.E_texture as texture_mod
+import image_filters.F_ar_filters as ar_mod
 
 
-class AEffectApp:
-    def __init__(self, window, window_title):
+class FXCanvas:
+    def __init__(self, window, window_title, assets = None):
         self.window = window
         self.window.title(window_title)
+        self.assets = assets if assets else {}
         self.window.geometry("1100x700")
         self.window.configure(bg="#2c3e50")
 
@@ -39,7 +38,6 @@ class AEffectApp:
         title = tk.Label(self.sidebar, text="IMAGE FILTERS", font=("Helvetica", 16, "bold"), bg="#34495e", fg="#ecf0f1")
         title.pack(pady=10)
 
-        # UI categories mapping directly to scripts
         self.create_category_section("Color Transformations", [
             ("Warm", lambda f: color_mod.apply_warm(f)),
             ("Cold", lambda f: color_mod.apply_cold(f)),
@@ -65,12 +63,10 @@ class AEffectApp:
         ])
 
         self.create_category_section("Face-aware AR", [
-            ("AR Hat", lambda f: ar_mod.apply_ar_prop(f, os.path.join(self.assets_dir, "hat.png"), "hat")),
-            ("AR Mustache",
-             lambda f: ar_mod.apply_ar_prop(f, os.path.join(self.assets_dir, "mustache.png"), "mustache")),
-            ("AR Glasses", lambda f: ar_mod.apply_ar_prop(f, os.path.join(self.assets_dir, "glasses.png"), "glasses")),
-            ("AR Butterfly",
-             lambda f: ar_mod.apply_ar_prop(f, os.path.join(self.assets_dir, "butterfly.png"), "butterfly"))
+            ("AR Hat", lambda f: ar_mod.apply_ar_prop(f, self.assets.get("hat"), "hat")),
+            ("AR Mustache", lambda f: ar_mod.apply_ar_prop(f, self.assets.get("mustache"), "mustache")),
+            ("AR Glasses", lambda f: ar_mod.apply_ar_prop(f, self.assets.get("glasses"), "glasses")),
+            ("AR Butterfly", lambda f: ar_mod.apply_ar_prop(f, self.assets.get("butterfly"), "butterfly"))
         ])
 
         clear_btn = tk.Button(self.sidebar, text="Reset Image", command=self.clear_filter, bg="#e74c3c", fg="white",
