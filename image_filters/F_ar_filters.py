@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import os
+
 
 cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
 face_cascade = cv2.CascadeClassifier(cascade_path)
@@ -32,11 +32,15 @@ def overlay_transparent(bg, overlay, x, y, overlay_w, overlay_h):
     return bg
 
 
-def apply_ar_prop(frame, asset_path, prop_type="glasses"):
-    if not os.path.exists(asset_path):
+def apply_ar_prop(frame, overlay, prop_type="glasses"):
+    if overlay is None:
+        print("ERROR: Overlay image is None. Check your file path!")
         return frame
 
-    overlay = cv2.imread(asset_path, cv2.IMREAD_UNCHANGED)
+    if len(overlay.shape) < 3 or overlay.shape[2] < 3:
+        print("ERROR: Overlay image must have color channels (BGR/BGRA).")
+        return frame
+
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5, minSize=(60, 60))
 
@@ -47,8 +51,6 @@ def apply_ar_prop(frame, asset_path, prop_type="glasses"):
             ow, oh, ox, oy = int(w * 0.55), int(h * 0.20), x + int(w * 0.22), y + int(h * 0.62)
         elif prop_type == "hat":
             ow, oh, ox, oy = int(w * 1.2), int(h * 0.6), x - int(w * 0.1), y - int(h * 0.45)
-        elif prop_type == "butterfly":
-            ow, oh, ox, oy = int(w * 0.4), int(h * 0.4), x + int(w * 0.3), y + int(h * 0.3)
         else:
             continue
 
