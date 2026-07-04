@@ -82,8 +82,8 @@ class FXCanvas:
         self.display_panel = tk.Label(right_container, bg="#212529")
         self.display_panel.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
 
-        control_bar = tk.Frame(right_container, bg="#212529", height=80)
-        control_bar.pack(side=tk.BOTTOM, fill=tk.X, pady=15)
+        #control_bar = tk.Frame(right_container, bg="#212529", height=80)
+        #control_bar.pack(side=tk.BOTTOM, fill=tk.X, pady=15)
 
         title = tk.Label(self.sidebar, text="CanvasFX", font=("Helvetica", 16, "bold"), bg="#343A40", fg="#ecf0f1")
         title.pack(pady=10)
@@ -122,22 +122,22 @@ class FXCanvas:
         settings_btn = tk.Button(self.sidebar, text="⚙️ Set Save Folder", command=self.change_save_folder,bg="#4e6187", fg="white", 
                                 font=("Helvetica", 10, "bold"), 
                                 width=25, height=1, relief=tk.FLAT, cursor="hand2")
-        settings_btn.pack(side=tk.BOTTOM, pady=(0, 10))
+        settings_btn.pack(side=tk.BOTTOM, pady=(5, 10))
+
+        self.capture_btn = tk.Button(self.sidebar, text="Capture", command=self.capture_photo,bg="#4e6187", fg="white", 
+                                    font=("Helvetica", 10, "bold"),
+                                    width=25, height=2, relief=tk.FLAT, cursor="hand2")
+        self.capture_btn.pack(side=tk.BOTTOM, pady=(5, 0))
 
         clear_btn = tk.Button(self.sidebar, text="Reset Image", command=self.clear_filter, bg="#769edb", fg="white",
                               font=("Helvetica", 10, "bold"), 
                               width=25, height=2, relief=tk.FLAT, cursor="hand2")
-        clear_btn.pack(side=tk.BOTTOM, pady=(5, 5))
+        clear_btn.pack(side=tk.BOTTOM, pady=(5, 0))
 
         import_btn = tk.Button(self.sidebar, text="Import Photo", command=self.import_photo,bg="#769edb", fg="white", 
                                font=("Helvetica", 10, "bold"), 
                                width=25, height=2, relief=tk.FLAT, cursor="hand2")
         import_btn.pack(side=tk.BOTTOM, pady=(10, 0))
-
-        self.capture_btn = tk.Button(control_bar, text="Capture", command=self.capture_photo,bg="#4e6187", fg="white", 
-                                    font=("Helvetica", 14, "bold"),
-                                    padx=25, pady=8, relief=tk.FLAT, borderwidth=1, cursor="hand2")
-        self.capture_btn.pack(side=tk.TOP)
 
 
     def create_category_section(self, label_text, filter_list):
@@ -228,7 +228,7 @@ class FXCanvas:
         print(f"SNAP! Saved to: {filepath}")
 
         self.capture_btn.configure(bg="#e7e7e7", text="Saved!")
-        self.window.after(1000, lambda: self.capture_btn.configure(bg="#e74c3c", text="Capture"))
+        self.window.after(1000, lambda: self.capture_btn.configure(bg="#4e6187", text="Capture"))
 
 
     def load_config(self):
